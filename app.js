@@ -15,7 +15,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_uHDbJRsCE
 // --- 4. PENGATURAN DAFTAR TOPPING ---
 const AVAILABLE_TOPPINGS = [
     { name: "Tanpa Topping", price: 0 },
-    { name: "Boba", price: Belum tersedia },
+    { name: "Boba", price:  },
 ];
 
 const KEMASAN_PRICES = {
