@@ -4,23 +4,24 @@ const STORE_OPEN_HOUR = 10;   // Buka Jam 10:00 Pagi
 const STORE_CLOSE_HOUR = 22;  // Tutup Jam 22:00 Malam
 
 // --- 2. PENGATURAN ONGKOS KIRIM & PROMO ---
-const MIN_ORDER_DELIVERY = 20000; 
-const FREE_SHIPPING_MIN_ORDER = 50000; 
-const FREE_RADIUS_KM = 2; 
-const SHIPPING_RATE_PER_KM = 2000; 
+const MIN_ORDER_DELIVERY = 20000;      // Minimal belanja agar bisa pakai kurir
+const FREE_SHIPPING_MIN_ORDER = 50000; // Minimal belanja untuk Gratis Ongkir Total
+const FREE_RADIUS_KM = 2;              // Jarak Gratis Ongkir (KM)
+const SHIPPING_RATE_PER_KM = 2000;     // Tarif tambahan per KM selanjutnya
 
 // --- 3. URL GOOGLE APPS SCRIPT (BACKUP KE GOOGLE SHEETS) ---
-const GOOGLE_SCRIPT_URL = ""; 
+const GOOGLE_SCRIPT_URL = ""; // Isi URL-nya kalau sudah buat script di Google Sheets
 
-// --- 4. PENGATURAN DAFTAR TOPPING ---
-const AVAILABLE_TOPPINGS = [ 
-    { name: "Tanpa Topping (Lainnya Belum Tersedia)", price: 0 } 
+// --- 4. PENGATURAN DAFTAR TOPPING & HARGA KEMASAN ---
+// Menggunakan 1 menu saja sementara (Tanpa Topping)
+const AVAILABLE_TOPPINGS = [
+    { name: "Tanpa Topping (Lainnya Belum Tersedia)", price: 0 }
 ];
 
 const KEMASAN_PRICES = {
-    "Reguler": 0,    
-    "Large": 3000,   
-    "Botol": 4000    
+    "Reguler": 0,    // Tambahan Harga default
+    "Large": 3000,   // Tambahan harga ukuran Cup Large
+    "Botol": 4000    // Tambahan harga jika pakai kemasan botol plastik
 };
 
 // --- DATABASE PRODUK ---
@@ -30,17 +31,18 @@ const products = [
     { id: 2, name: "Thai Green Tea", price: 12000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
 ];
 
-// --- STATE APLIKASI ---
-let cart = JSON.parse(localStorage.getItem('bakolteh_cart_v2')) || [];
+// --- STATE/MEMORI APLIKASI ---
+let cart = JSON.parse(localStorage.getItem('bakolteh_cart_v3')) || [];
 let deliveryMethod = 'delivery'; 
 let isCartOpen = false;
 let activeCategory = "Semua";
 let isStoreOpen = true;
 let tempSelectedProduct = null;
 
-// --- FUNGSI FORMAT RUPIAH ---
+// --- FUNGSI FORMAT MATA UANG RUPIAH ---
 const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
+// --- FUNGSI CEK JAM OPERASIONAL TOKO ---
 function checkStoreHours() {
     const currentHour = new Date().getHours();
     isStoreOpen = (currentHour >= STORE_OPEN_HOUR && currentHour < STORE_CLOSE_HOUR);
@@ -75,6 +77,7 @@ function checkStoreHours() {
     }
 }
 
+// --- FUNGSI PERGANTIAN OPSI FORM ---
 function toggleScheduleTime() {
     const type = document.getElementById('orderScheduleType').value;
     const timeInput = document.getElementById('orderScheduleTime');
@@ -98,6 +101,7 @@ function toggleSizeOptions() {
     updateModalPrice();
 }
 
+// --- FUNGSI MENGHITUNG HARGA TOTAL DI MODAL (BERDASARKAN OPSI) ---
 function updateModalPrice() {
     if(!tempSelectedProduct) return;
     
@@ -116,6 +120,7 @@ function updateModalPrice() {
     document.getElementById('optPrice').innerText = formatRp(tempSelectedProduct.price + extra);
 }
 
+// --- FUNGSI MENAMPILKAN KATEGORI & PRODUK ---
 function renderCategories() {
     const container = document.getElementById('categoryFilter');
     container.innerHTML = categories.map(cat => `
@@ -157,6 +162,7 @@ function renderProducts() {
     });
 }
 
+// --- FUNGSI MODAL OPSI PRODUK ---
 function openOptionsModal(id) {
     tempSelectedProduct = products.find(p => p.id === id);
     document.getElementById('optTitle').innerText = tempSelectedProduct.name;
@@ -191,11 +197,13 @@ function closeOptionsModal() {
     panel.classList.remove('modal-enter-active');
     setTimeout(() => modal.classList.add('hidden'), 200);
     
+    // Perbaikan Bug: Jangan kosongkan memori produk dulu sebelum notif muncul
     setTimeout(() => {
         tempSelectedProduct = null;
     }, 300);
 }
 
+// --- FUNGSI PROSES KERANJANG BELANJA ---
 function confirmAddToCart() {
     if (!tempSelectedProduct) return;
 
@@ -252,7 +260,7 @@ function updateQty(cartItemId, change) {
     updateCartUI();
 }
 
-function saveCart() { localStorage.setItem('bakolteh_cart_v2', JSON.stringify(cart)); }
+function saveCart() { localStorage.setItem('bakolteh_cart_v3', JSON.stringify(cart)); }
 
 function updateCartUI() {
     const badge = document.getElementById('cartBadge');
@@ -277,7 +285,7 @@ function updateCartUI() {
                 <p class="text-[11px] text-gray-500 mb-1 leading-tight">
                     Kemasan: ${item.options.packaging === 'Cup' ? 'Cup ' + item.options.size : 'Botol'}<br>
                     Gula: ${item.options.sugar}, Es: ${item.options.ice}<br>
-                    ${item.options.topping !== 'Tanpa Topping' ? `Topping: ${item.options.topping}` : ''}
+                    ${item.options.topping.includes('Lainnya Belum Tersedia') ? '' : `Topping: ${item.options.topping}`}
                 </p>
                 <p class="text-brand-500 font-semibold text-sm mt-1">${formatRp(item.finalPrice * item.qty)}</p>
             </div>
@@ -336,6 +344,7 @@ function calculateTotal() {
     document.getElementById('summaryTotal').innerText = formatRp(subtotal + shippingCost);
 }
 
+// --- FUNGSI CHECKOUT & PENGIRIMAN KE WHATSAPP/SHEETS ---
 async function processCheckout() {
     if (cart.length === 0) return showToast("Keranjang kosong!");
     
@@ -359,7 +368,7 @@ async function processCheckout() {
         notes = document.getElementById('custNotes').value.trim();
         distance = parseFloat(document.getElementById('custDistance').value) || 0;
         
-        if (!address) return showToast("Mohon isi Alamat");
+        if (!address) return showToast("Mohon isi Alamat Lengkap");
         if (subtotal < MIN_ORDER_DELIVERY) return showToast(`Minimal belanja delivery ${formatRp(MIN_ORDER_DELIVERY)}`);
 
         if (subtotal < FREE_SHIPPING_MIN_ORDER && distance > FREE_RADIUS_KM) {
@@ -369,10 +378,18 @@ async function processCheckout() {
 
     const total = subtotal + shippingCost;
     let pesananTeks = "";
+    
     cart.forEach(item => {
         const opt = item.options;
         const kemasanTxt = opt.packaging === 'Cup' ? `Cup ${opt.size}` : `Botol`;
-        const note = `[${kemasanTxt}, Gula:${opt.sugar}, Es:${opt.ice}, Top:${opt.topping}]`;
+        let note = `[${kemasanTxt}, Gula:${opt.sugar}, Es:${opt.ice}`;
+        
+        // Hanya tambahkan tulisan topping jika bukan "Tanpa Topping..."
+        if(!opt.topping.includes('Lainnya Belum Tersedia')) {
+             note += `, Top:${opt.topping}`;
+        }
+        note += `]`;
+        
         pesananTeks += `- ${item.name} ${note} (${item.qty}x) = ${formatRp(item.finalPrice * item.qty)}\n`;
     });
 
@@ -395,6 +412,7 @@ async function processCheckout() {
     btn.innerHTML = `Memproses...`;
     btn.disabled = true;
 
+    // Proses Backup ke Google Sheets (jika URL sudah diisi)
     if (GOOGLE_SCRIPT_URL !== "") {
         try {
             await fetch(GOOGLE_SCRIPT_URL, {
@@ -404,10 +422,11 @@ async function processCheckout() {
                 body: JSON.stringify(orderData)
             });
         } catch (e) {
-            console.log("Backup ke sheet gagal, lanjut ke WA", e);
+            console.log("Catatan backup Google Sheet gagal, namun lanjut eksekusi WA", e);
         }
     }
 
+    // Susun Format Pesan WhatsApp
     let waMsg = `Halo BakolTeh, saya mau pesan:\n\n${pesananTeks}`;
     waMsg += `\n*Subtotal:* ${formatRp(subtotal)}`;
     waMsg += `\n\n*Informasi Pelanggan:*`;
@@ -427,6 +446,7 @@ async function processCheckout() {
     
     waMsg += `\n*TOTAL BAYAR:* ${formatRp(total)}\n\nTerima kasih!`;
 
+    // Reset Keranjang
     cart = [];
     saveCart();
     updateCartUI();
@@ -434,18 +454,12 @@ async function processCheckout() {
     btn.innerHTML = originalBtnText;
     btn.disabled = false;
     
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    let waUrl = "";
-    
-    if (isMobile) {
-        waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(waMsg)}`;
-    } else {
-        waUrl = `https://web.whatsapp.com/send?phone=${WA_NUMBER}&text=${encodeURIComponent(waMsg)}`;
-    }
-    
+    // Lompat ke aplikasi WA tanpa buka tab baru
+    const waUrl = `https://api.whatsapp.com/send/?phone=${WA_NUMBER}&text=${encodeURIComponent(waMsg)}`;
     window.location.href = waUrl;
 }
 
+// --- FUNGSI TAMPILAN LAINNYA ---
 function toggleCart() {
     const modal = document.getElementById('cartModal');
     const panel = document.getElementById('cartPanel');
@@ -482,6 +496,7 @@ function initTheme() {
     });
 }
 
+// Menjalankan semua fungsi saat website pertama kali dimuat
 window.onload = () => {
     initTheme();
     checkStoreHours(); 
