@@ -15,10 +15,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_uHDbJRsCE
 // --- 4. PENGATURAN DAFTAR TOPPING ---
 const AVAILABLE_TOPPINGS = [
     { name: "Tanpa Topping", price: 0 },
-    { name: "Boba", price:  },
-    { name: "Cheese Foam", price:  },
-    { name: "Jelly", price:  },
-    { name: "Oreo Crumb", price: }
+    { name: "Boba", price: Belum tersedia },
 ];
 
 const KEMASAN_PRICES = {
@@ -31,7 +28,7 @@ const KEMASAN_PRICES = {
 const categories = ["Semua", "Teh"]; 
 const products = [
     { id: 1, name: "Thai Tea Original", price: 10000, category: "Teh", image: "https://placehold.co/400x400/d97706/ffffff?text=Thai+Tea" },
-    { id: 2, name: "Thai Green Tea", price: 7000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
+    { id: 2, name: "Thai Green Tea", price: 70000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
 ];
 
 // --- STATE APLIKASI ---
