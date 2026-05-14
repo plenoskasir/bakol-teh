@@ -16,19 +16,20 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_uHDbJRsCE
 const AVAILABLE_TOPPINGS = [
     { name: "Tanpa Topping", price: 0 },
     { name: "Boba", price:  },
+    
 ];
 
 const KEMASAN_PRICES = {
-    "Reguler": 5000,    
-    "Large": 7000,   
-    "Botol": 10000    
+    "Reguler": 0,    
+    "Large": 3000,   
+    "Botol": 4000    
 };
 
 // --- DATABASE PRODUK ---
 const categories = ["Semua", "Teh"]; 
 const products = [
-    { id: 1, name: "Thai Tea Original", price: 10000, category: "Teh", image: "https://placehold.co/400x400/d97706/ffffff?text=Thai+Tea" },
-    { id: 2, name: "Thai Green Tea", price: 70000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
+    { id: 1, name: "Thai Tea Original", price: 7000, category: "Teh", image: "https://placehold.co/400x400/d97706/ffffff?text=Thai+Tea" },
+    { id: 2, name: "Thai Green Tea", price: 10000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
 ];
 
 // --- STATE APLIKASI ---
