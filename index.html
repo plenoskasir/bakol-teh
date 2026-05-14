@@ -788,21 +788,3 @@
     </script>
 </body>
 </html>
-```
-
-### Ringkasan Pembaruan (Mobile First & Startup App UI)
-
-1. **Responsive Grid Dinamis:** Saya mengubah baris kode utama pembungkus (`container`) agar otomatis menyesuaikan resolusi:
-   * **HP (Mobile):** Tampil 2 kolom agar pas dan gambar tidak pecah.
-   * **Tablet:** Tampil 3 kolom.
-   * **Laptop Kecil:** Tampil 4 kolom.
-   * **Desktop Besar:** Tampil 5 kolom. *(Layout membentang luas hingga max width 1400px agar layar PC/Monitor besar tidak terlihat sempit).*
-2. **Desain Card Produk Premium:** 
-   * Gambar otomatis *Square* (Kotak) proporsional.
-   * Ditambahkan efek *hover* yang sangat mulus *(gambar sedikit zoom, dan kotak terangkat naik).*
-   * Judul dipotong dengan `line-clamp-2` (jadi kalau teks nama minuman panjang, tidak akan merusak tinggi kotak yang lain).
-   * Tombol "Tambah" sekarang dirancang kekinian dengan ikon Keranjang, menyesuaikan ukuran jari jika dibuka di HP.
-3. **Cart & Modal (Mobile vs Desktop):**
-   * Di HP: Memakai animasi *Bottom Sheet* yang muncul dari bawah agar mudah digeser dengan jempol. Form dikunci pada lebar maksimal.
-   * Di Desktop: Keranjang tampil sebagai panel samping (*Sidebar*) yang elegan.
-4. **Satu File untuk Semuanya:** Saya telah menyatukan semua instruksi `style.css` (ke dalam `<style>`) dan `app.js` (ke dalam `<script>`) untuk menjaga performa optimal tanpa file terpisah, sesuai dengan *best practice* optimasi yang kita butuhkan.
