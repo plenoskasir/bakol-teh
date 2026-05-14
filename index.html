@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakol Teh - Pesan Online</title>
+    
+    <!-- Panggil Tailwind CSS (Dari Internet) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Panggil File style.css milikmu -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Konfigurasi Warna Tailwind (Brand Color) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: { brand: { 500: '#d97706', 600: '#b45309' } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-24">
+
+    <nav class="sticky top-0 z-40 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">Bakol<span class="text-brand-500">Teh</span></h1>
+                <p id="storeStatusBadge" class="text-xs font-semibold px-2 py-0.5 rounded-md mt-1 inline-block bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">Buka</p>
+            </div>
+            
+            <div class="flex items-center gap-3 sm:gap-4">
+                <button id="themeToggle" class="p-2 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                    <svg id="moonIcon" class="w-5 h-5 hidden dark:block" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="sunIcon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </button>
+
+                <button onclick="toggleCart()" class="relative p-2 rounded-full bg-brand-500 text-white hover:bg-brand-600 transition shadow-lg shadow-brand-500/30">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="flex overflow-x-auto gap-2 pb-4 mb-4 hide-scrollbar" id="categoryFilter"></div>
+        <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6"></div>
+    </main>
+
+    <div id="optionsModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeOptionsModal()"></div>
+        <div class="bg-white dark:bg-gray-800 w-full sm:w-[400px] rounded-t-2xl sm:rounded-2xl shadow-2xl z-10 p-5 transform transition-transform modal-enter" id="optionsPanel">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 id="optTitle" class="font-bold text-lg">Pilih Opsi</h3>
+                    <p id="optPrice" class="text-brand-500 font-semibold mt-1"></p>
+                </div>
+                <button onclick="closeOptionsModal()" class="p-1 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Pilih Kemasan</label>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="packaging" value="Cup" class="peer hidden" checked onchange="toggleSizeOptions()">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Gelas Cup</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="packaging" value="Botol" class="peer hidden" onchange="toggleSizeOptions()">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Botol Plastik</div>
+                        </label>
+                    </div>
+
+                    <div id="sizeContainer" class="block">
+                        <label class="block text-sm font-medium mb-2">Ukuran Cup</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="Reguler" class="peer hidden" checked onchange="updateModalPrice()">
+                                <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Reguler</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="size" value="Large" class="peer hidden" onchange="updateModalPrice()">
+                                <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Large (+Rp 3.000)</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Level Gula</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="sugar" value="Normal" class="peer hidden" checked>
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Normal</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="sugar" value="Less Sugar" class="peer hidden">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Less</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="sugar" value="No Sugar" class="peer hidden">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">No Sugar</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Level Es</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ice" value="Normal" class="peer hidden" checked>
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Normal</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ice" value="Less Ice" class="peer hidden">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">Less</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="ice" value="No Ice" class="peer hidden">
+                            <div class="text-center py-2 border rounded-lg peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 dark:border-gray-600 text-sm transition">No Ice</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium mb-2">Topping (Opsional)</label>
+                    <div id="toppingContainer" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <button onclick="confirmAddToCart()" class="w-full mt-6 bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-4 rounded-xl shadow-lg transition">
+                Tambahkan
+            </button>
+        </div>
+    </div>
+
+    <div id="cartModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleCart()"></div>
+        <div class="absolute bottom-0 w-full sm:w-[450px] sm:right-0 sm:top-0 bg-white dark:bg-gray-800 rounded-t-2xl sm:rounded-none shadow-2xl flex flex-col max-h-[90vh] sm:max-h-full transition-transform transform translate-y-full sm:translate-y-0 sm:translate-x-full duration-300" id="cartPanel">
+            
+            <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                <h3 class="font-bold text-lg">Keranjang Pesanan</h3>
+                <button onclick="toggleCart()" class="p-2 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cartContent"></div>
+
+            <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 overflow-y-auto max-h-[50vh]">
+                <h4 class="font-semibold mb-3">Detail Pengiriman</h4>
+                
+                <div class="space-y-3">
+                    <input type="text" id="custName" placeholder="Nama Anda" class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
+
+                    <div class="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
+                        <button onclick="setDeliveryMethod('delivery')" id="btnDelivery" class="flex-1 py-2 text-sm font-medium rounded-lg shadow bg-white dark:bg-gray-800 text-brand-500 transition">Dikirim</button>
+                        <button onclick="setDeliveryMethod('pickup')" id="btnPickup" class="flex-1 py-2 text-sm font-medium rounded-lg text-gray-500 dark:text-gray-300 hover:text-gray-800 transition">Ambil Sendiri</button>
+                    </div>
+
+                    <div id="deliveryFields" class="space-y-3">
+                        <div id="deliveryWarning" class="hidden bg-red-100 text-red-700 p-2.5 rounded-lg text-xs font-medium border border-red-200">
+                            *Minimal pesanan untuk delivery adalah Rp 20.000.
+                        </div>
+                        <textarea id="custAddress" placeholder="Alamat Lengkap" rows="2" class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none transition"></textarea>
+                        <input type="text" id="custNotes" placeholder="Catatan/Patokan (opsional)" class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
+                        <div class="relative">
+                            <input type="number" id="custDistance" placeholder="Jarak ke lokasi" oninput="calculateTotal()" min="0" step="0.1" class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 pr-10 focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
+                            <span class="absolute right-4 top-2.5 text-gray-500 font-medium">KM</span>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">*Gratis ongkir belanja > Rp 50.000. Jika tidak, gratis 2 KM pertama, selebihnya Rp 2.000/KM.</p>
+                    </div>
+
+                    <div id="pickupFields" class="hidden bg-brand-500/10 border border-brand-500/20 rounded-xl p-4 text-center">
+                        <p class="text-sm mb-2 font-medium">Pesanan diambil di kedai kami.</p>
+                        <p class="text-xs text-gray-600 dark:text-gray-400 mb-3">WH9W+HM5, RT.04/RW.02, Glanggang, Kec. Pakisaji, Kabupaten Malang, Jawa Timur 65162</p>
+                        <a href="https://maps.google.com/?q=WH9W+HM5,+RT.04/RW.02,+Glanggang,+Kec.+Pakisaji,+Kabupaten+Malang,+Jawa+Timur+65162" target="_blank" class="inline-flex items-center text-sm text-brand-600 dark:text-brand-400 hover:underline font-semibold">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            Buka Google Maps
+                        </a>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <h4 class="font-semibold mb-2 text-sm">Waktu Pengiriman / Pengambilan</h4>
+                        <select id="orderScheduleType" onchange="toggleScheduleTime()" class="w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none transition mb-2">
+                            <option value="now">Sekarang (Secepatnya)</option>
+                            <option value="later">Pesan untuk Nanti / Besok</option>
+                        </select>
+                        <input type="datetime-local" id="orderScheduleTime" class="hidden w-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-brand-500 focus:outline-none transition">
+                        <p id="closedWarningCheckout" class="hidden text-xs text-red-500 mt-1 font-medium">*Toko sedang tutup. Silakan pilih "Pesan untuk Nanti / Besok".</p>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 space-y-1">
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400">
+                        <span>Subtotal</span>
+                        <span id="summarySubtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600 dark:text-gray-400 items-center">
+                        <span>Ongkos Kirim <span id="badgePromoOngkir" class="hidden ml-1 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded uppercase font-bold">Gratis</span></span>
+                        <span id="summaryShipping">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between font-bold text-lg mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <span>Total Bayar</span>
+                        <span id="summaryTotal" class="text-brand-500">Rp 0</span>
+                    </div>
+                </div>
+
+                <button id="btnCheckout" onclick="processCheckout()" class="w-full mt-4 bg-[#25D366] hover:bg-[#1DA851] text-white font-bold py-3.5 px-4 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
+                    Kirim Pesanan
+                </button>
+                <p id="storeClosedMsg" class="hidden text-center text-red-500 text-sm mt-3 font-medium">Maaf, Kedai sedang tutup.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <a href="https://wa.me/66930712297?text=Halo%20BakolTeh,%20mau%20tanya-tanya%20dulu%20dong..." target="_blank" class="fixed bottom-6 right-6 z-40 bg-[#25D366] text-white p-3.5 rounded-full shadow-xl hover:scale-110 transition-transform flex items-center justify-center">
+        <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
+    </a>
+
+    <!-- Panggil File app.js milikmu -->
+    <script src="app.js"></script>
+
+</body>
+</html>
