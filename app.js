@@ -30,8 +30,8 @@ const KEMASAN_PRICES = {
 // --- DATABASE PRODUK ---
 const categories = ["Semua", "Teh"]; 
 const products = [
-    { id: 1, name: "Thai cup", price: 7000, category: "Teh", image: "https://ibb.co.com/whKgfntb" },
-    { id: 2, name: "Thai botol", price: 10000, category: "Teh", image: "https://ibb.co.com/VcRH5yzG" }
+    { id: 1, name: "Thai Tea Original", price: 10000, category: "Teh", image: "https://cdn.phototourl.com/free/2026-05-14-ff796ce9-9ca7-46e6-a7d9-94c90b933f6e.jpg" },
+    { id: 2, name: "Thai Green Tea", price: 12000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
 ];
 
 // --- STATE APLIKASI ---
