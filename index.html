@@ -6,6 +6,7 @@
     <title>Bakol Teh - Pesan Online</title>
     <meta name="theme-color" content="#d97706">
     
+    <!-- INI ADALAH BARIS PALING PENTING AGAR DESAINNYA MUNCUL (TAILWIND CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
@@ -24,7 +25,7 @@
     <style>
         body { 
             transition: background-color 0.3s ease, color 0.3s ease; 
-            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: transparent; /* Hilangkan efek blok biru saat dipencet di HP */
         }
 
         /* Modifikasi Scrollbar Custom agar lebih rapi */
@@ -62,6 +63,7 @@
 </head>
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-28 antialiased selection:bg-brand-500 selection:text-white">
 
+    <!-- NAVBAR ATAS -->
     <nav class="sticky top-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all">
         <div class="max-w-[1400px] w-full mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
             <div class="flex flex-col">
@@ -89,6 +91,7 @@
         </div>
     </nav>
 
+    <!-- AREA PRODUK -->
     <main class="max-w-[1400px] w-full mx-auto px-4 py-5 md:py-8">
         <!-- Filter Kategori -->
         <div class="flex overflow-x-auto gap-2 pb-2 mb-4 md:mb-6 hide-scrollbar snap-x" id="categoryFilter"></div>
@@ -97,6 +100,7 @@
         <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 lg:gap-5"></div>
     </main>
 
+    <!-- MODAL PILIHAN PRODUK (KEMASAN/GULA/ES) -->
     <div id="optionsModal" class="fixed inset-0 z-50 hidden flex flex-col justify-end md:justify-center md:items-center">
         <div class="absolute inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeOptionsModal()"></div>
         
@@ -201,6 +205,7 @@
         </div>
     </div>
 
+    <!-- MODAL KERANJANG -->
     <div id="cartModal" class="fixed inset-0 z-50 hidden flex flex-col justify-end md:justify-start md:items-end">
         <div class="absolute inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
         
@@ -290,6 +295,7 @@
         <svg class="w-6 h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
     </a>
 
+    <!-- SCRIPT LOGIKA -->
     <script>
         // --- 1. PENGATURAN TOKO UTAMA ---
         const WA_NUMBER = "66930712297"; 
@@ -426,7 +432,6 @@
             renderProducts();
         }
 
-        // DESAIN CARD MODERN (Aspect Square, Padding Proporsional, Lebih Padat & Rapi)
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
@@ -554,7 +559,6 @@
 
         function saveCart() { localStorage.setItem('bakolteh_cart_v5', JSON.stringify(cart)); }
 
-        // DESAIN KERANJANG COMPACT
         function updateCartUI() {
             const badge = document.getElementById('cartBadge');
             const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -591,8 +595,8 @@
         // --- 11. LOGIKA CHECKOUT & ONGKIR ---
         function setDeliveryMethod(method) {
             deliveryMethod = method;
-            document.getElementById('btnDelivery').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'delivery' ? 'shadow bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
-            document.getElementById('btnPickup').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'pickup' ? 'shadow bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
+            document.getElementById('btnDelivery').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'delivery' ? 'shadow-sm bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
+            document.getElementById('btnPickup').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'pickup' ? 'shadow-sm bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
             
             document.getElementById('deliveryFields').classList.toggle('hidden', method !== 'delivery');
             document.getElementById('pickupFields').classList.toggle('hidden', method !== 'pickup');
