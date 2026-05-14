@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#d97706">
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -15,30 +15,34 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: { brand: { 500: '#d97706', 600: '#b45309' } }
+                    colors: { brand: { 50: '#fef3c7', 100: '#fde68a', 500: '#d97706', 600: '#b45309', 700: '#92400e' } }
                 }
             }
         }
     </script>
 
     <style>
-        /* Animasi transisi pergantian tema terang dan gelap */
         body { 
             transition: background-color 0.3s ease, color 0.3s ease; 
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Modifikasi Scrollbar Custom agar lebih rapi & elegan */
+        /* Modifikasi Scrollbar Custom agar lebih rapi */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
+        /* Menyembunyikan scrollbar horizontal di filter kategori & list */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
         /* Animasi Notifikasi (Toast Notification) */
-        .toast-enter { opacity: 0; transform: translateY(100%) translateX(-50%) scale(0.9); }
+        .toast-enter { opacity: 0; transform: translateY(100%) translateX(-50%) scale(0.95); }
         .toast-enter-active { opacity: 1; transform: translateY(0) translateX(-50%) scale(1); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Animasi Pop-up Modal Pilihan Opsi Produk */
+        /* Animasi Pop-up Modal Pilihan Opsi Produk (Mobile Bottom Sheet / Desktop Centered) */
         .modal-enter { opacity: 0; transform: translateY(100%); }
         @media (min-width: 768px) {
             .modal-enter { transform: scale(0.95); opacity: 0; }
@@ -48,20 +52,18 @@
         /* Menyembunyikan icon panah atas-bawah pada input Number */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none; 
-            margin: 0; 
+            -webkit-appearance: none; margin: 0; 
         }
 
-        /* Menyembunyikan scrollbar horizontal di filter kategori */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Transisi Fade untuk form dinamis */
+        .animate-fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-32 antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-900 dark:text-gray-100 min-h-screen pb-28 antialiased selection:bg-brand-500 selection:text-white">
 
-    <!-- Navigasi Utama (Lebih Lebar & Responsive) -->
     <nav class="sticky top-0 z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-lg border-b border-gray-200 dark:border-gray-800 shadow-sm transition-all">
-        <div class="max-w-[1400px] w-full mx-auto px-4 py-3 flex justify-between items-center">
+        <div class="max-w-[1400px] w-full mx-auto px-4 py-3 md:py-4 flex justify-between items-center">
             <div class="flex flex-col">
                 <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-none">Bakol<span class="text-brand-500">Teh</span></h1>
                 <div class="flex items-center gap-1.5 mt-1">
@@ -81,115 +83,117 @@
 
                 <button onclick="toggleCart()" class="relative p-2.5 md:p-3 rounded-full bg-brand-500 text-white hover:bg-brand-600 transition-all duration-300 active:scale-95 shadow-md shadow-brand-500/30">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 border-2 border-white dark:border-gray-900 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 border-2 border-white dark:border-gray-900 text-white text-[10px] md:text-xs font-bold w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-full hidden">0</span>
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Konten Utama (Grid Responsive) -->
-    <main class="max-w-[1400px] w-full mx-auto px-4 py-6 md:py-8">
-        <div class="flex overflow-x-auto gap-2.5 pb-2 mb-6 hide-scrollbar" id="categoryFilter"></div>
+    <main class="max-w-[1400px] w-full mx-auto px-4 py-5 md:py-8">
+        <!-- Filter Kategori -->
+        <div class="flex overflow-x-auto gap-2 pb-2 mb-4 md:mb-6 hide-scrollbar snap-x" id="categoryFilter"></div>
         
         <!-- Grid Diperbarui: HP=2, Tablet=3, Laptop=4, Desktop=5 -->
-        <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 md:gap-5 lg:gap-6"></div>
+        <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4 lg:gap-5"></div>
     </main>
 
-    <!-- Modal Pilihan Opsi Produk -->
     <div id="optionsModal" class="fixed inset-0 z-50 hidden flex flex-col justify-end md:justify-center md:items-center">
         <div class="absolute inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeOptionsModal()"></div>
         
-        <div class="bg-white dark:bg-gray-900 w-full md:w-[480px] h-[85vh] md:h-auto md:max-h-[90vh] rounded-t-3xl md:rounded-2xl shadow-2xl z-10 flex flex-col transform transition-transform modal-enter" id="optionsPanel">
+        <!-- Panel Modal -->
+        <div class="bg-white dark:bg-gray-900 w-full md:w-[480px] max-h-[90vh] md:h-auto rounded-t-3xl md:rounded-2xl shadow-2xl z-10 flex flex-col transform transition-transform modal-enter relative" id="optionsPanel">
             
+            <!-- Drag Handle for Mobile -->
             <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mt-3 mb-1 md:hidden shrink-0"></div>
             
-            <div class="px-5 pb-4 pt-3 border-b border-gray-100 dark:border-gray-800 flex justify-between items-start shrink-0">
+            <div class="px-5 pb-3 pt-2 border-b border-gray-100 dark:border-gray-800 flex justify-between items-start shrink-0">
                 <div class="pr-4">
                     <h3 id="optTitle" class="font-bold text-lg md:text-xl text-gray-900 dark:text-white leading-tight line-clamp-2">Nama Produk</h3>
-                    <p id="optPrice" class="text-brand-500 font-extrabold mt-1.5 text-base md:text-lg"></p>
+                    <p id="optPrice" class="text-brand-500 font-extrabold mt-1 text-base md:text-lg"></p>
                 </div>
-                <button onclick="closeOptionsModal()" class="p-2 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <button onclick="closeOptionsModal()" class="p-2 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors mt-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <div class="px-5 py-5 space-y-7 overflow-y-auto overscroll-contain flex-1 hide-scrollbar">
+            <div class="px-5 py-4 space-y-6 overflow-y-auto overscroll-contain flex-1 hide-scrollbar">
                 <!-- Kemasan -->
                 <div>
-                    <label class="block text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Pilih Kemasan</label>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
+                    <label class="block text-[13px] md:text-sm font-bold mb-2.5 text-gray-900 dark:text-gray-100">Pilih Kemasan</label>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
                         <label class="cursor-pointer">
                             <input type="radio" name="packaging" value="Cup" class="peer hidden" checked onchange="toggleSizeOptions()">
-                            <div class="text-center py-3.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Gelas Cup</div>
+                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] md:text-sm font-semibold transition-all">Gelas Cup</div>
                         </label>
                         <label class="cursor-pointer">
                             <input type="radio" name="packaging" value="Botol" class="peer hidden" onchange="toggleSizeOptions()">
-                            <div class="text-center py-3.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Botol Plastik</div>
+                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] md:text-sm font-semibold transition-all">Botol Plastik</div>
                         </label>
                     </div>
 
                     <div id="sizeContainer" class="block animate-fade-in">
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-2">
                             <label class="cursor-pointer">
                                 <input type="radio" name="size" value="Reguler" class="peer hidden" checked onchange="updateModalPrice()">
-                                <div class="text-center py-3 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Reguler</div>
+                                <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] md:text-sm font-semibold transition-all">Reguler</div>
                             </label>
                             <label class="cursor-pointer">
                                 <input type="radio" name="size" value="Large" class="peer hidden" onchange="updateModalPrice()">
-                                <div class="text-center py-3 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Large (+3K)</div>
+                                <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] md:text-sm font-semibold transition-all">Large (+3K)</div>
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Level Gula -->
-                <div>
-                    <label class="block text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Level Gula</label>
-                    <div class="grid grid-cols-3 gap-2 md:gap-3">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sugar" value="Normal" class="peer hidden" checked>
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Normal</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sugar" value="Less Sugar" class="peer hidden">
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Less</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="sugar" value="No Sugar" class="peer hidden">
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">No Sugar</div>
-                        </label>
+                <!-- Level Gula & Es -->
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-[13px] md:text-sm font-bold mb-2.5 text-gray-900 dark:text-gray-100">Level Gula</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sugar" value="Normal" class="peer hidden" checked>
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">Normal</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sugar" value="Less Sugar" class="peer hidden">
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">Less</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="sugar" value="No Sugar" class="peer hidden">
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">No Sugar</div>
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <!-- Level Es -->
-                <div>
-                    <label class="block text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Level Es</label>
-                    <div class="grid grid-cols-3 gap-2 md:gap-3">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="ice" value="Normal" class="peer hidden" checked>
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Normal</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="ice" value="Less Ice" class="peer hidden">
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">Less</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="ice" value="No Ice" class="peer hidden">
-                            <div class="text-center py-2.5 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-sm font-semibold transition-all">No Ice</div>
-                        </label>
+                    <div>
+                        <label class="block text-[13px] md:text-sm font-bold mb-2.5 text-gray-900 dark:text-gray-100">Level Es</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="ice" value="Normal" class="peer hidden" checked>
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">Normal</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="ice" value="Less Ice" class="peer hidden">
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">Less</div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="ice" value="No Ice" class="peer hidden">
+                                <div class="text-center py-2 border-2 border-gray-100 dark:border-gray-800 rounded-xl peer-checked:bg-brand-50 peer-checked:border-brand-500 peer-checked:text-brand-600 dark:peer-checked:bg-brand-500/20 dark:peer-checked:border-brand-500 dark:peer-checked:text-brand-400 text-[13px] font-semibold transition-all">No Ice</div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Topping Dinamis -->
-                <div class="pb-4">
-                    <label class="block text-sm font-bold mb-3 text-gray-900 dark:text-gray-100">Topping Tambahan</label>
-                    <div id="toppingContainer" class="space-y-3"></div>
+                <div class="pb-2">
+                    <label class="block text-[13px] md:text-sm font-bold mb-2.5 text-gray-900 dark:text-gray-100">Topping Tambahan</label>
+                    <div id="toppingContainer" class="space-y-2.5"></div>
                 </div>
             </div>
 
             <!-- Tombol Tambah Fix di Bawah -->
-            <div class="p-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 shrink-0 rounded-b-3xl md:rounded-b-2xl">
-                <button onclick="confirmAddToCart()" class="w-full bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+            <div class="p-4 md:p-5 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 shrink-0 rounded-b-3xl md:rounded-b-2xl shadow-[0_-10px_15px_rgba(0,0,0,0.02)]">
+                <button onclick="confirmAddToCart()" class="w-full bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white font-bold py-3.5 md:py-4 px-4 rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     <span>Tambahkan ke Keranjang</span>
                 </button>
@@ -197,95 +201,93 @@
         </div>
     </div>
 
-    <!-- Panel Keranjang (Sidebar di Desktop, Bottom Sheet di Mobile) -->
     <div id="cartModal" class="fixed inset-0 z-50 hidden flex flex-col justify-end md:justify-start md:items-end">
         <div class="absolute inset-0 bg-gray-900/60 dark:bg-black/80 backdrop-blur-sm transition-opacity" onclick="toggleCart()"></div>
         
-        <div class="bg-gray-50 dark:bg-gray-900 w-full md:w-[420px] lg:w-[450px] h-[92vh] md:h-full rounded-t-3xl md:rounded-none shadow-2xl flex flex-col transform transition-transform translate-y-full md:translate-y-0 md:translate-x-full duration-300 z-10" id="cartPanel">
+        <div class="bg-gray-50 dark:bg-gray-900 w-full md:w-[420px] lg:w-[450px] max-h-[92vh] md:h-full rounded-t-3xl md:rounded-none shadow-2xl flex flex-col transform transition-transform translate-y-full md:translate-y-0 md:translate-x-full duration-300 z-10 relative" id="cartPanel">
             
             <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full mx-auto mt-3 mb-1 md:hidden shrink-0"></div>
             
-            <div class="px-5 pb-4 pt-3 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center shrink-0 bg-gray-50 dark:bg-gray-900">
+            <div class="px-5 pb-3 pt-2 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center shrink-0 bg-gray-50 dark:bg-gray-900">
                 <h3 class="font-extrabold text-lg md:text-xl text-gray-900 dark:text-white">Keranjang Saya</h3>
                 <button onclick="toggleCart()" class="p-2 bg-gray-200 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-full hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            <div class="flex-1 overflow-y-auto p-4 md:p-5 space-y-6 overscroll-contain hide-scrollbar pb-10">
+            <div class="flex-1 overflow-y-auto p-4 md:p-5 space-y-5 overscroll-contain hide-scrollbar">
                 <!-- List Item -->
-                <div id="cartContent" class="space-y-3 md:space-y-4"></div>
+                <div id="cartContent" class="space-y-3"></div>
 
                 <!-- Form Pengiriman -->
-                <div class="bg-white dark:bg-gray-800 p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                    <h4 class="font-bold text-sm text-gray-900 dark:text-white mb-3.5">Info Pengiriman</h4>
+                <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <h4 class="font-bold text-sm text-gray-900 dark:text-white mb-3">Info Pengiriman</h4>
                     
-                    <div class="space-y-4">
-                        <input type="text" id="custName" placeholder="Nama Pemesan" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-sm md:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                    <div class="space-y-3.5">
+                        <input type="text" id="custName" placeholder="Nama Pemesan" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-[13px] md:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
 
                         <div class="flex bg-gray-100 dark:bg-gray-900 rounded-xl p-1.5">
-                            <button onclick="setDeliveryMethod('delivery')" id="btnDelivery" class="flex-1 py-2.5 text-sm font-bold rounded-lg shadow bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 transition-all">Dikirim</button>
-                            <button onclick="setDeliveryMethod('pickup')" id="btnPickup" class="flex-1 py-2.5 text-sm font-bold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-800 transition-all">Ambil Sendiri</button>
+                            <button onclick="setDeliveryMethod('delivery')" id="btnDelivery" class="flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg shadow-sm bg-white dark:bg-gray-700 text-brand-600 dark:text-brand-400 transition-all">Dikirim</button>
+                            <button onclick="setDeliveryMethod('pickup')" id="btnPickup" class="flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-800 transition-all">Ambil Sendiri</button>
                         </div>
 
-                        <div id="deliveryFields" class="space-y-3.5 animate-fade-in">
-                            <div id="deliveryWarning" class="hidden bg-red-50 text-red-600 p-3 rounded-xl text-xs md:text-sm font-semibold border border-red-100">
+                        <div id="deliveryFields" class="space-y-3 animate-fade-in">
+                            <div id="deliveryWarning" class="hidden bg-red-50 text-red-600 p-3 rounded-xl text-xs font-semibold border border-red-100 leading-snug">
                                 *Minimal pesanan untuk delivery Rp 20.000.
                             </div>
-                            <textarea id="custAddress" placeholder="Alamat Lengkap" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-sm md:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all resize-none"></textarea>
-                            <input type="text" id="custNotes" placeholder="Catatan (Patokan rumah / pesan)" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-sm md:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                            <textarea id="custAddress" placeholder="Alamat Lengkap" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-[13px] md:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all resize-none"></textarea>
+                            <input type="text" id="custNotes" placeholder="Catatan (Patokan rumah)" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-[13px] md:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
                             <div class="relative">
-                                <input type="number" id="custDistance" placeholder="Jarak lokasi" oninput="calculateTotal()" min="0" step="0.1" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 pr-12 text-sm md:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                                <span class="absolute right-4 top-3.5 text-gray-400 font-bold text-sm md:text-base">KM</span>
+                                <input type="number" id="custDistance" placeholder="Jarak lokasi" oninput="calculateTotal()" min="0" step="0.1" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 pr-12 text-[13px] md:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                                <span class="absolute right-4 top-3 text-gray-400 font-bold text-[13px] md:text-sm">KM</span>
                             </div>
                         </div>
 
-                        <div id="pickupFields" class="hidden bg-brand-50 dark:bg-brand-900/10 border border-brand-100 dark:border-brand-900/30 rounded-xl p-4 text-center animate-fade-in">
-                            <p class="text-sm mb-1 font-bold text-gray-800 dark:text-gray-200">Diambil di kedai</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3.5 leading-relaxed">WH9W+HM5, Glanggang, Kec. Pakisaji, Kab. Malang</p>
-                            <a href="https://maps.google.com/?q=WH9W+HM5,+RT.04/RW.02,+Glanggang,+Kec.+Pakisaji,+Kabupaten+Malang,+Jawa+Timur+65162" target="_blank" class="inline-flex items-center justify-center w-full py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm text-brand-600 dark:text-brand-400 font-bold hover:bg-gray-50 transition-all shadow-sm">
+                        <div id="pickupFields" class="hidden bg-brand-50 dark:bg-brand-900/10 border border-brand-100 dark:border-brand-900/30 rounded-xl p-3.5 text-center animate-fade-in">
+                            <p class="text-[13px] md:text-sm mb-1 font-bold text-gray-800 dark:text-gray-200">Diambil di kedai</p>
+                            <p class="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">WH9W+HM5, Glanggang, Kec. Pakisaji, Kab. Malang</p>
+                            <a href="https://maps.google.com/?q=WH9W+HM5,+RT.04/RW.02,+Glanggang,+Kec.+Pakisaji,+Kabupaten+Malang,+Jawa+Timur+65162" target="_blank" class="inline-flex items-center justify-center w-full py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-[13px] md:text-sm text-brand-600 dark:text-brand-400 font-bold hover:bg-gray-50 transition-all shadow-sm">
                                 Buka Google Maps
                             </a>
                         </div>
 
                         <div class="pt-2 border-t border-gray-100 dark:border-gray-700">
-                            <select id="orderScheduleType" onchange="toggleScheduleTime()" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-sm md:text-base font-semibold focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer">
+                            <select id="orderScheduleType" onchange="toggleScheduleTime()" class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-[13px] md:text-sm font-semibold focus:ring-2 focus:ring-brand-500 outline-none transition-all appearance-none cursor-pointer">
                                 <option value="now">Dikirim Sekarang</option>
                                 <option value="later">Pre-Order (Nanti/Besok)</option>
                             </select>
-                            <input type="datetime-local" id="orderScheduleTime" class="hidden mt-3 w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3.5 text-sm md:text-base focus:ring-2 focus:ring-brand-500 outline-none transition-all">
-                            <p id="closedWarningCheckout" class="hidden text-xs md:text-sm text-red-500 mt-2 font-medium">*Kedai tutup. Dialihkan ke mode Pre-Order.</p>
+                            <input type="datetime-local" id="orderScheduleTime" class="hidden mt-3 w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-[13px] md:text-sm focus:ring-2 focus:ring-brand-500 outline-none transition-all">
+                            <p id="closedWarningCheckout" class="hidden text-xs text-red-500 mt-2 font-medium">*Kedai tutup. Dialihkan ke mode Pre-Order.</p>
                         </div>
                     </div>
                 </div>
-
             </div> 
 
-            <!-- FOOTER FIXED -->
-            <div class="p-4 md:p-5 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.03)] rounded-b-3xl md:rounded-none z-20">
-                <div class="flex justify-between items-end mb-4 px-1">
+            <!-- FOOTER FIXED CHECKOUT -->
+            <div class="p-4 md:p-5 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shrink-0 shadow-[0_-5px_15px_rgba(0,0,0,0.03)] z-20">
+                <div class="flex justify-between items-end mb-3.5 px-1">
                     <div>
-                        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400 mb-1">Ongkir: <span id="summaryShipping" class="font-semibold text-gray-800 dark:text-gray-200">Rp 0</span> <span id="badgePromoOngkir" class="hidden ml-1.5 text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded uppercase font-extrabold tracking-wide">Gratis</span></p>
-                        <p class="text-sm md:text-base font-bold text-gray-900 dark:text-white">Total Bayar</p>
+                        <p class="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 mb-0.5">Ongkir: <span id="summaryShipping" class="font-semibold text-gray-800 dark:text-gray-200">Rp 0</span> <span id="badgePromoOngkir" class="hidden ml-1 text-[9px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded uppercase font-extrabold tracking-wide">Gratis</span></p>
+                        <p class="text-[13px] md:text-sm font-bold text-gray-900 dark:text-white">Total Bayar</p>
                     </div>
-                    <span id="summaryTotal" class="text-xl md:text-2xl font-black text-brand-600 dark:text-brand-400">Rp 0</span>
+                    <span id="summaryTotal" class="text-lg md:text-xl font-black text-brand-600 dark:text-brand-400">Rp 0</span>
                 </div>
 
-                <button id="btnCheckout" onclick="processCheckout()" class="w-full bg-[#25D366] hover:bg-[#1DA851] active:bg-[#199146] text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base md:text-lg">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
+                <button id="btnCheckout" onclick="processCheckout()" class="w-full bg-[#25D366] hover:bg-[#1DA851] active:bg-[#199146] text-white font-bold py-3.5 md:py-4 px-4 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-[15px] md:text-base">
+                    <svg class="w-5 h-5 md:w-6 md:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
                     Pesan via WhatsApp
                 </button>
-                <p id="storeClosedMsg" class="hidden text-center text-red-500 text-xs md:text-sm mt-3 font-semibold">Maaf, Kedai sedang tutup.</p>
+                <p id="storeClosedMsg" class="hidden text-center text-red-500 text-[11px] md:text-xs mt-2.5 font-semibold">Maaf, Kedai sedang tutup.</p>
             </div>
         </div>
     </div>
 
     <!-- Container Notifikasi Toast -->
-    <div id="toastContainer" class="fixed bottom-24 md:bottom-10 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-[90%] max-w-sm"></div>
+    <div id="toastContainer" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none w-[90%] md:max-w-sm"></div>
 
     <!-- Tombol Mengambang WhatsApp -->
-    <a href="https://wa.me/66930712297?text=Halo%20BakolTeh,%20mau%20tanya-tanya%20dulu%20dong..." target="_blank" class="fixed bottom-6 right-4 md:bottom-8 md:right-8 z-40 bg-[#25D366] text-white p-3.5 md:p-4 rounded-full shadow-[0_8px_20px_rgba(37,211,102,0.4)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center">
-        <svg class="w-7 h-7 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
+    <a href="https://wa.me/66930712297?text=Halo%20BakolTeh,%20mau%20tanya-tanya%20dulu%20dong..." target="_blank" class="fixed bottom-5 right-4 md:bottom-8 md:right-8 z-40 bg-[#25D366] text-white p-3 md:p-4 rounded-full shadow-[0_8px_20px_rgba(37,211,102,0.4)] hover:scale-110 active:scale-95 transition-all flex items-center justify-center">
+        <svg class="w-6 h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-3.825 3.113-6.937 6.937-6.937 3.825 0 6.938 3.112 6.938 6.937 0 3.825-3.113 6.938-6.938z"></path></svg>
     </a>
 
     <script>
@@ -303,7 +305,7 @@
         // --- 3. URL GOOGLE APPS SCRIPT ---
         const GOOGLE_SCRIPT_URL = ""; 
 
-        // --- 4. PENGATURAN DAFTAR TOPPING ---
+        // --- 4. PENGATURAN DAFTAR TOPPING & KEMASAN ---
         const AVAILABLE_TOPPINGS = [
             { name: "Tanpa Topping (Lainnya Belum Tersedia)", price: 0 }
         ];
@@ -314,17 +316,15 @@
             "Botol": 4000    
         };
 
-        // --- DATABASE PRODUK ---
+        // --- 5. DATABASE PRODUK ---
         const categories = ["Semua", "Teh"]; 
         const products = [
             { id: 1, name: "Thai Tea Original", price: 10000, category: "Teh", image: "https://placehold.co/400x400/d97706/ffffff?text=Thai+Tea" },
-            { id: 2, name: "Thai Green Tea", price: 12000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" },
-            { id: 3, name: "Thai Tea Coklat", price: 13000, category: "Teh", image: "https://placehold.co/400x400/78350f/ffffff?text=Coklat" },
-            { id: 4, name: "Thai Tea Vanilla", price: 13000, category: "Teh", image: "https://placehold.co/400x400/fcd34d/000000?text=Vanilla" }
+            { id: 2, name: "Thai Green Tea", price: 12000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
         ];
 
-        // --- STATE APLIKASI ---
-        let cart = JSON.parse(localStorage.getItem('bakolteh_cart_v4')) || [];
+        // --- 6. STATE APLIKASI ---
+        let cart = JSON.parse(localStorage.getItem('bakolteh_cart_v5')) || [];
         let deliveryMethod = 'delivery'; 
         let isCartOpen = false;
         let activeCategory = "Semua";
@@ -333,6 +333,7 @@
 
         const formatRp = (angka) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
 
+        // --- 7. FUNGSI JAM OPERASIONAL ---
         function checkStoreHours() {
             const currentHour = new Date().getHours();
             isStoreOpen = (currentHour >= STORE_OPEN_HOUR && currentHour < STORE_CLOSE_HOUR);
@@ -344,7 +345,7 @@
 
             if (isStoreOpen) {
                 badge.innerText = `Buka (Tutup jam ${STORE_CLOSE_HOUR}:00)`;
-                badge.className = "text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md mt-1 inline-block bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 border border-green-200 dark:border-green-800";
+                badge.className = "text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 md:px-2.5 rounded mt-1 inline-block bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400 border border-green-200 dark:border-green-800";
                 closedMsg.classList.add('hidden');
                 warnCheckout.classList.add('hidden');
                 
@@ -355,7 +356,7 @@
                 }
             } else {
                 badge.innerText = `Tutup (Bisa Pre-Order)`;
-                badge.className = "text-[10px] md:text-xs font-bold px-2.5 py-1 rounded-md mt-1 inline-block bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border border-red-200 dark:border-red-800";
+                badge.className = "text-[10px] md:text-xs font-bold px-2 py-0.5 md:py-1 md:px-2.5 rounded mt-1 inline-block bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400 border border-red-200 dark:border-red-800";
                 closedMsg.classList.add('hidden'); 
                 warnCheckout.classList.remove('hidden');
                 
@@ -377,6 +378,7 @@
             }
         }
 
+        // --- 8. FUNGSI MODAL & HARGA ---
         function toggleSizeOptions() {
             const kemasan = document.querySelector('input[name="packaging"]:checked').value;
             const sizeContainer = document.getElementById('sizeContainer');
@@ -408,10 +410,11 @@
             document.getElementById('optPrice').innerText = formatRp(tempSelectedProduct.price + extra);
         }
 
+        // --- 9. FUNGSI RENDER TAMPILAN PRODUK ---
         function renderCategories() {
             const container = document.getElementById('categoryFilter');
             container.innerHTML = categories.map(cat => `
-                <button onclick="setCategory('${cat}')" class="px-5 md:px-6 py-2 md:py-2.5 rounded-full text-sm md:text-base font-semibold whitespace-nowrap transition-all duration-300 border ${activeCategory === cat ? 'bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-500/20' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}">
+                <button onclick="setCategory('${cat}')" class="px-5 py-1.5 md:py-2 rounded-full text-[13px] md:text-sm font-bold whitespace-nowrap transition-all duration-300 border snap-center shrink-0 ${activeCategory === cat ? 'bg-brand-500 text-white border-brand-500 shadow-md shadow-brand-500/20' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'}">
                     ${cat}
                 </button>
             `).join('');
@@ -423,7 +426,7 @@
             renderProducts();
         }
 
-        // DESAIN CARD MODERN (Aspect Square, Hover Effect, Line Clamp)
+        // DESAIN CARD MODERN (Aspect Square, Padding Proporsional, Lebih Padat & Rapi)
         function renderProducts() {
             const grid = document.getElementById('productGrid');
             grid.innerHTML = '';
@@ -432,19 +435,22 @@
 
             filtered.forEach(p => {
                 grid.innerHTML += `
-                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col group transition-all duration-300 md:hover:-translate-y-1.5 cursor-pointer" onclick="openOptionsModal(${p.id})">
-                        <div class="relative w-full aspect-square bg-gray-100 dark:bg-gray-700 overflow-hidden">
-                            <img src="${p.image}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" alt="${p.name}">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col group transition-all duration-300 cursor-pointer relative" onclick="openOptionsModal(${p.id})">
+                        <!-- Gambar aspect-square, object-cover -->
+                        <div class="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                            <img src="${p.image}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" alt="${p.name}">
+                            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
                         </div>
-                        <div class="p-3 md:p-4 lg:p-5 flex flex-col flex-1 justify-between gap-3">
+                        
+                        <!-- Konten teks dan tombol dipadatkan (p-3) -->
+                        <div class="p-3 md:p-3.5 flex flex-col flex-1 justify-between gap-2.5">
                             <div>
-                                <h3 class="font-bold text-gray-800 dark:text-gray-100 text-sm md:text-base lg:text-lg leading-snug mb-1 md:mb-1.5 line-clamp-2">${p.name}</h3>
-                                <p class="text-brand-500 font-extrabold text-sm md:text-base lg:text-lg">${formatRp(p.price)}</p>
+                                <h3 class="font-bold text-gray-800 dark:text-gray-100 text-[13px] md:text-sm leading-snug line-clamp-2">${p.name}</h3>
+                                <p class="text-brand-500 font-extrabold text-[13px] md:text-sm mt-0.5 md:mt-1">${formatRp(p.price)}</p>
                             </div>
-                            <button class="w-full bg-brand-50 group-hover:bg-brand-500 text-brand-600 group-hover:text-white dark:bg-brand-500/10 dark:text-brand-400 dark:group-hover:bg-brand-500 dark:group-hover:text-white font-bold py-2.5 md:py-3 rounded-xl text-xs md:text-sm lg:text-base transition-all duration-300 flex items-center justify-center gap-1.5">
-                                <svg class="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                <span class="hidden sm:inline">Tambah</span>
-                                <span class="sm:hidden">Pesan</span>
+                            <button class="w-full bg-brand-50 group-hover:bg-brand-500 text-brand-600 group-hover:text-white dark:bg-brand-500/10 dark:text-brand-400 dark:group-hover:bg-brand-500 dark:group-hover:text-white font-bold py-1.5 md:py-2 rounded-xl text-[12px] md:text-[13px] transition-all duration-300 flex items-center justify-center gap-1.5 mt-auto">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                <span>Tambah</span>
                             </button>
                         </div>
                     </div>
@@ -452,18 +458,19 @@
             });
         }
 
+        // --- 10. LOGIKA MODAL & KERANJANG ---
         function openOptionsModal(id) {
             tempSelectedProduct = products.find(p => p.id === id);
             document.getElementById('optTitle').innerText = tempSelectedProduct.name;
             
             const toppingContainer = document.getElementById('toppingContainer');
             toppingContainer.innerHTML = AVAILABLE_TOPPINGS.map((top, index) => `
-                <label class="flex items-center justify-between p-3.5 border-2 rounded-xl cursor-pointer dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-gray-100" onchange="updateModalPrice()">
+                <label class="flex items-center justify-between p-3 border-2 rounded-xl cursor-pointer dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-gray-100" onchange="updateModalPrice()">
                     <div class="flex items-center gap-3">
-                        <input type="radio" name="topping" value="${top.name}" data-price="${top.price}" class="w-5 h-5 text-brand-500 focus:ring-brand-500 rounded-full border-gray-300" ${index === 0 ? 'checked' : ''}>
-                        <span class="text-sm md:text-base font-semibold text-gray-800 dark:text-gray-200">${top.name}</span>
+                        <input type="radio" name="topping" value="${top.name}" data-price="${top.price}" class="w-4 h-4 md:w-5 md:h-5 text-brand-500 focus:ring-brand-500 border-gray-300" ${index === 0 ? 'checked' : ''}>
+                        <span class="text-[13px] md:text-sm font-semibold text-gray-800 dark:text-gray-200">${top.name}</span>
                     </div>
-                    ${top.price > 0 ? `<span class="text-sm md:text-base font-bold text-gray-500">+${formatRp(top.price)}</span>` : ''}
+                    ${top.price > 0 ? `<span class="text-[12px] md:text-[13px] font-bold text-gray-500">+${formatRp(top.price)}</span>` : ''}
                 </label>
             `).join('');
 
@@ -545,9 +552,9 @@
             updateCartUI();
         }
 
-        function saveCart() { localStorage.setItem('bakolteh_cart_v4', JSON.stringify(cart)); }
+        function saveCart() { localStorage.setItem('bakolteh_cart_v5', JSON.stringify(cart)); }
 
-        // DESAIN ITEM KERANJANG MODERN
+        // DESAIN KERANJANG COMPACT
         function updateCartUI() {
             const badge = document.getElementById('cartBadge');
             const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
@@ -556,35 +563,36 @@
 
             const content = document.getElementById('cartContent');
             if (cart.length === 0) {
-                content.innerHTML = `<div class="text-center py-10 flex flex-col items-center"><svg class="w-16 h-16 text-gray-300 dark:text-gray-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><p class="text-gray-500 dark:text-gray-400 font-medium text-sm md:text-base">Keranjang masih kosong</p></div>`;
+                content.innerHTML = `<div class="text-center py-8 flex flex-col items-center"><svg class="w-12 h-12 text-gray-300 dark:text-gray-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg><p class="text-gray-500 dark:text-gray-400 font-medium text-[13px] md:text-sm">Keranjang masih kosong</p></div>`;
             } else {
                 content.innerHTML = cart.map(item => `
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col transition-all">
-                        <div class="flex justify-between items-start mb-2.5">
-                            <h4 class="font-bold text-sm md:text-base text-gray-900 dark:text-white leading-tight pr-3">${item.name}</h4>
+                    <div class="bg-white dark:bg-gray-800 p-3 md:p-3.5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col transition-all">
+                        <div class="flex justify-between items-start mb-1.5">
+                            <h4 class="font-bold text-[13px] md:text-sm text-gray-900 dark:text-white leading-tight pr-2">${item.name}</h4>
                             <div class="flex items-center bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shrink-0 shadow-sm">
-                                <button onclick="updateQty('${item.cartItemId}', -1)" class="px-3.5 py-1 text-gray-600 dark:text-gray-400 font-bold active:scale-90 transition-transform">-</button>
-                                <span class="px-1.5 text-xs md:text-sm font-black text-brand-600 dark:text-brand-400 w-5 text-center">${item.qty}</span>
-                                <button onclick="updateQty('${item.cartItemId}', 1)" class="px-3.5 py-1 text-gray-600 dark:text-gray-400 font-bold active:scale-90 transition-transform">+</button>
+                                <button onclick="updateQty('${item.cartItemId}', -1)" class="px-2.5 py-0.5 md:py-1 text-gray-600 dark:text-gray-400 font-bold active:scale-90 transition-transform">-</button>
+                                <span class="px-1 text-[11px] md:text-xs font-black text-brand-600 dark:text-brand-400 w-4 md:w-5 text-center">${item.qty}</span>
+                                <button onclick="updateQty('${item.cartItemId}', 1)" class="px-2.5 py-0.5 md:py-1 text-gray-600 dark:text-gray-400 font-bold active:scale-90 transition-transform">+</button>
                             </div>
                         </div>
-                        <p class="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">
+                        <p class="text-[10px] md:text-[11px] text-gray-500 dark:text-gray-400 mb-2 leading-relaxed">
                             • ${item.options.packaging === 'Cup' ? 'Cup ' + item.options.size : 'Botol'} 
                             • Gula: ${item.options.sugar} 
                             • Es: ${item.options.ice}
                             ${item.options.topping.includes('Lainnya Belum Tersedia') ? '' : `<br>• Topping: ${item.options.topping}`}
                         </p>
-                        <p class="text-brand-500 font-extrabold text-sm md:text-base">${formatRp(item.finalPrice * item.qty)}</p>
+                        <p class="text-brand-500 font-extrabold text-[13px] md:text-sm">${formatRp(item.finalPrice * item.qty)}</p>
                     </div>
                 `).join('');
             }
             calculateTotal();
         }
 
+        // --- 11. LOGIKA CHECKOUT & ONGKIR ---
         function setDeliveryMethod(method) {
             deliveryMethod = method;
-            document.getElementById('btnDelivery').className = `flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${method === 'delivery' ? 'shadow-md bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
-            document.getElementById('btnPickup').className = `flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${method === 'pickup' ? 'shadow-md bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
+            document.getElementById('btnDelivery').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'delivery' ? 'shadow bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
+            document.getElementById('btnPickup').className = `flex-1 py-2 text-[13px] md:text-sm font-bold rounded-lg transition-all ${method === 'pickup' ? 'shadow bg-white dark:bg-gray-800 text-brand-600 dark:text-brand-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-800'}`;
             
             document.getElementById('deliveryFields').classList.toggle('hidden', method !== 'delivery');
             document.getElementById('pickupFields').classList.toggle('hidden', method !== 'pickup');
@@ -631,7 +639,7 @@
         }
 
         async function processCheckout() {
-            if (cart.length === 0) return showToast("⚠️ Keranjang belanja Anda masih kosong!");
+            if (cart.length === 0) return showToast("⚠️ Keranjang Anda kosong!");
             
             const name = document.getElementById('custName').value.trim();
             if (!name) return showToast("⚠️ Mohon isi Nama Pemesan");
@@ -689,7 +697,7 @@
 
             const btn = document.getElementById('btnCheckout');
             const originalBtnText = btn.innerHTML;
-            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-2 h-4 w-4 md:h-5 md:w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
             btn.disabled = true;
 
             if (GOOGLE_SCRIPT_URL !== "") {
@@ -701,7 +709,7 @@
                         body: JSON.stringify(orderData)
                     });
                 } catch (e) {
-                    console.log("Sheet gagal, lanjut WA");
+                    console.log("Backup ke sheet gagal, lanjut WA", e);
                 }
             }
 
@@ -757,7 +765,7 @@
         function showToast(msg) {
             const c = document.getElementById('toastContainer');
             const t = document.createElement('div');
-            t.className = "bg-gray-900/95 dark:bg-gray-800/95 backdrop-blur text-white px-5 py-3.5 rounded-2xl shadow-2xl text-sm font-bold toast-enter border border-gray-700 mx-auto text-center";
+            t.className = "bg-gray-900/95 dark:bg-gray-800/95 backdrop-blur text-white px-4 py-3 rounded-2xl shadow-xl text-[13px] md:text-sm font-bold toast-enter border border-gray-700 mx-auto text-center";
             t.innerText = msg;
             c.appendChild(t);
             requestAnimationFrame(() => t.classList.add('toast-enter-active'));
