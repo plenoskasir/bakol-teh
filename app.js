@@ -10,28 +10,28 @@ const FREE_RADIUS_KM = 2;
 const SHIPPING_RATE_PER_KM = 2000; 
 
 // --- 3. URL GOOGLE APPS SCRIPT (BACKUP KE GOOGLE SHEETS) ---
-const GOOGLE_SCRIPT_URL = ""; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbww_uHDbJRsCEBTrGg7blnVFZBVKniX66Vd_OOczVo94KYWC3SZbWjlOWU1g-DdGcrW2w/exec"; 
 
 // --- 4. PENGATURAN DAFTAR TOPPING ---
 const AVAILABLE_TOPPINGS = [
     { name: "Tanpa Topping", price: 0 },
-    { name: "Boba", price: 3000 },
-    { name: "Cheese Foam", price: 5000 },
-    { name: "Jelly", price: 2000 },
-    { name: "Oreo Crumb", price: 2500 }
+    { name: "Boba", price:  },
+    { name: "Cheese Foam", price:  },
+    { name: "Jelly", price:  },
+    { name: "Oreo Crumb", price: }
 ];
 
 const KEMASAN_PRICES = {
-    "Reguler": 0,    
-    "Large": 3000,   
-    "Botol": 4000    
+    "Reguler": 5000,    
+    "Large": 7000,   
+    "Botol": 10000    
 };
 
 // --- DATABASE PRODUK ---
 const categories = ["Semua", "Teh"]; 
 const products = [
     { id: 1, name: "Thai Tea Original", price: 10000, category: "Teh", image: "https://placehold.co/400x400/d97706/ffffff?text=Thai+Tea" },
-    { id: 2, name: "Thai Green Tea", price: 12000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
+    { id: 2, name: "Thai Green Tea", price: 7000, category: "Teh", image: "https://placehold.co/400x400/16a34a/ffffff?text=Green+Tea" }
 ];
 
 // --- STATE APLIKASI ---
