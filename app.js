@@ -13,12 +13,8 @@ const SHIPPING_RATE_PER_KM = 2000;
 const GOOGLE_SCRIPT_URL = ""; 
 
 // --- 4. PENGATURAN DAFTAR TOPPING ---
-const AVAILABLE_TOPPINGS = [ { name: "Tanpa Topping (Lainnya Belum Tersedia)", price: 0 } ];
-    { name: "Tanpa Topping", price: 0 },
-    { name: "Boba", price: 3000 },
-    { name: "Cheese Foam", price: 5000 },
-    { name: "Jelly", price: 2000 },
-    { name: "Oreo Crumb", price: 2500 }
+const AVAILABLE_TOPPINGS = [ 
+    { name: "Tanpa Topping (Lainnya Belum Tersedia)", price: 0 } 
 ];
 
 const KEMASAN_PRICES = {
