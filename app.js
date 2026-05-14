@@ -145,16 +145,16 @@ function renderProducts() {
     filtered.forEach(p => {
         grid.innerHTML += `
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden flex flex-col">
-                <div class="relative pt-[100%] bg-gray-200 dark:bg-gray-700">
+               <div class="relative aspect-square bg-gray-200 dark:bg-gray-700">
                     <img src="${p.image}" class="absolute top-0 left-0 w-full h-full object-cover" loading="lazy">
                 </div>
-                <div class="p-4 flex flex-col flex-1 justify-between">
+                <div class="p-3 flex flex-col flex-1 justify-between">
                     <div>
-                        <h3 class="font-semibold text-gray-800 dark:text-gray-100 text-sm sm:text-base leading-tight mb-1">${p.name}</h3>
+                        <h3 class="font-bold text-gray-800 dark:text-gray-100 text-xs sm:text-sm md:text-base leading-tight mb-1 line-clamp-2">
                         <p class="text-brand-500 font-bold text-sm sm:text-base mb-3">${formatRp(p.price)}</p>
                     </div>
-                    <button onclick="openOptionsModal(${p.id})" class="w-full bg-gray-100 dark:bg-gray-700 hover:bg-brand-500 hover:text-white dark:hover:bg-brand-500 text-gray-800 dark:text-gray-200 font-medium py-2 rounded-xl text-sm transition">
-                        + Keranjang
+                    <button onclick="openOptionsModal(${p.id})" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-semibold py-2 rounded-xl text-xs sm:text-sm transition"
+                        + Tambah
                     </button>
                 </div>
             </div>
